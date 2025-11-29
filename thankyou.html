@@ -1,0 +1,492 @@
+ <!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Thank You | MCP Masalas</title>
+
+  <style>
+    :root {
+      --accent: #c0392b;
+      --accent-soft: #ffe8e4;
+      --bg: #fffaf5;
+      --card: #ffffff;
+      --text-dark: #2c3e50;
+      --text-soft: #7f8c8d;
+      --radius-lg: 18px;
+      --shadow-soft: 0 10px 30px rgba(0,0,0,0.08);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text-dark);
+      padding: 1.2rem 1rem 2rem;
+      display: flex;
+      justify-content: center;
+    }
+
+    .page {
+      width: 100%;
+      max-width: 900px;
+    }
+
+    .back-link {
+      display: inline-block;
+      margin-bottom: 0.5rem;
+      font-size: 0.8rem;
+      color: var(--accent);
+      text-decoration: none;
+    }
+
+    h1 {
+      font-size: 1.5rem;
+      margin-bottom: 0.3rem;
+    }
+
+    .subtitle {
+      font-size: 0.9rem;
+      color: var(--text-soft);
+      margin-bottom: 1rem;
+    }
+
+    .steps {
+      display: flex;
+      gap: 0.5rem;
+      margin-bottom: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .step {
+      flex: 1;
+      min-width: 140px;
+      background: var(--card);
+      border-radius: 999px;
+      padding: 0.45rem 0.7rem;
+      font-size: 0.8rem;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      box-shadow: var(--shadow-soft);
+    }
+
+    .step span {
+      font-weight: 600;
+    }
+
+    .step.done {
+      background: var(--accent);
+      color: #fff;
+    }
+
+    .step.current {
+      border: 1px dashed var(--accent);
+    }
+
+    .card {
+      background: var(--card);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-soft);
+      padding: 1rem 1.1rem;
+      margin-bottom: 1rem;
+    }
+
+    .card h2 {
+      font-size: 1rem;
+      margin-bottom: 0.4rem;
+    }
+
+    .card-sub {
+      font-size: 0.8rem;
+      color: var(--text-soft);
+      margin-bottom: 0.5rem;
+    }
+
+    .success-icon-wrap {
+      display: flex;
+      align-items: center;
+      gap: 0.7rem;
+      margin-bottom: 0.6rem;
+    }
+
+    .success-icon {
+      width: 52px;
+      height: 52px;
+      border-radius: 50%;
+      background: #2ecc71;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.8rem;
+      color: #fff;
+      box-shadow: 0 10px 24px rgba(46, 204, 113, 0.45);
+      flex-shrink: 0;
+      animation: pop 0.4s ease-out;
+    }
+
+    @keyframes pop {
+      0% { transform: scale(0.6); opacity: 0; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+
+    .thank-text-main {
+      font-size: 1rem;
+      font-weight: 600;
+    }
+
+    .thank-text-sub {
+      font-size: 0.85rem;
+      color: var(--text-soft);
+      margin-top: 0.1rem;
+    }
+
+    /* 🔄 Preparing loader */
+    .prep-wrap {
+      margin-top: 0.8rem;
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      padding: 0.6rem 0.7rem;
+      border-radius: 14px;
+      background: #fdf0ec;
+    }
+
+    .prep-spinner {
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      border: 3px solid rgba(192,57,43,0.25);
+      border-top-color: var(--accent);
+      animation: spin 0.8s linear infinite;
+      flex-shrink: 0;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    .prep-main {
+      font-size: 0.88rem;
+      font-weight: 600;
+    }
+
+    .prep-sub {
+      font-size: 0.78rem;
+      color: var(--text-soft);
+    }
+
+    .info-list {
+      margin-top: 0.7rem;
+      font-size: 0.85rem;
+    }
+
+    .info-list li {
+      margin-bottom: 0.25rem;
+    }
+
+    .info-list strong {
+      font-weight: 600;
+    }
+
+    .small-note {
+      font-size: 0.76rem;
+      color: var(--text-soft);
+      margin-top: 0.5rem;
+    }
+
+    /* Latest order card */
+    .order-summary-heading {
+      font-size: 0.92rem;
+      font-weight: 600;
+      margin-bottom: 0.3rem;
+    }
+
+    .order-summary-box {
+      border-radius: 14px;
+      background: var(--accent-soft);
+      padding: 0.7rem 0.7rem;
+      font-size: 0.84rem;
+    }
+
+    .order-summary-row {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 0.25rem;
+    }
+
+    .order-summary-row span:first-child {
+      color: var(--text-soft);
+    }
+
+    .order-summary-total {
+      font-weight: 700;
+      margin-top: 0.35rem;
+      border-top: 1px dashed rgba(0,0,0,0.1);
+      padding-top: 0.3rem;
+    }
+
+    .order-empty-text {
+      font-size: 0.82rem;
+      color: var(--text-soft);
+    }
+
+    .btn-main {
+      margin-top: 0.8rem;
+      width: 100%;
+      border-radius: 999px;
+      border: none;
+      padding: 0.7rem 1rem;
+      font-size: 0.95rem;
+      cursor: pointer;
+      background: #27ae60;
+      color: #fff;
+      box-shadow: 0 8px 20px rgba(39, 174, 96, 0.35);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.4rem;
+    }
+
+    .btn-secondary {
+      margin-top: 0.4rem;
+      width: 100%;
+      border-radius: 999px;
+      border: 1px solid rgba(0,0,0,0.15);
+      padding: 0.6rem 1rem;
+      font-size: 0.85rem;
+      cursor: pointer;
+      background: #ffffff;
+      color: var(--text-dark);
+    }
+
+    .btn-row {
+      margin-top: 0.7rem;
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 0.6rem;
+    }
+
+    @media (max-width: 840px) {
+      .btn-row {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 640px) {
+      .btn-row {
+        grid-template-columns: minmax(0, 1fr);
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <a href="index.html" class="back-link">← Back to home</a>
+
+    <h1>Thank You for Your Order!</h1>
+    <p class="subtitle">
+      We’ve received your order request. Our team will review it and confirm with you on WhatsApp shortly.
+    </p>
+
+    <!-- Steps -->
+    <div class="steps">
+      <div class="step done">
+        📝 <span>Step 1</span> Order Details
+      </div>
+      <div class="step done">
+        💳 <span>Step 2</span> Payment
+      </div>
+      <div class="step current" id="step3">
+        📦 <span>Step 3</span> Confirmation
+      </div>
+    </div>
+
+    <!-- Main thank you card -->
+    <section class="card">
+      <div class="success-icon-wrap">
+        <div class="success-icon">✔</div>
+        <div>
+          <div class="thank-text-main">Your order request has been sent.</div>
+          <div class="thank-text-sub" id="thankTextSub">
+            If you paid online, keep your transaction ID ready. If you chose Cash on Delivery, please keep the amount handy.
+          </div>
+        </div>
+      </div>
+
+      <!-- 🔄 Preparing loader -->
+      <div class="prep-wrap">
+        <div class="prep-spinner"></div>
+        <div>
+          <div class="prep-main" id="prepMain">Preparing your masalas...</div>
+          <div class="prep-sub" id="prepSub">Our team is packing your order with care and will update you soon.</div>
+        </div>
+      </div>
+
+      <ul class="info-list">
+        <li><strong>1.</strong> You’ll receive a WhatsApp message from our team to confirm your order.</li>
+        <li><strong>2.</strong> Delivery time will depend on your area and order size.</li>
+        <li><strong>3.</strong> For any changes, you can simply reply to that WhatsApp chat.</li>
+      </ul>
+
+      <div class="small-note">
+        Tip: Don’t close your WhatsApp chat with us – it’s the easiest way to track your order and ask questions.
+      </div>
+    </section>
+
+    <!-- Latest order summary from this device -->
+    <section class="card">
+      <div class="order-summary-heading">Latest Order (This Device)</div>
+      <p class="card-sub">
+        This is a quick summary stored only in your browser. It is not a tax invoice or final bill.
+      </p>
+
+      <div id="latestOrderBox">
+        <!-- JS will fill this -->
+      </div>
+
+      <div class="small-note">
+        Clearing your browser data will erase this history. Our official record is maintained on our system.
+      </div>
+    </section>
+
+    <!-- Buttons -->
+    <div class="card">
+      <h2>What’s next?</h2>
+      <p class="card-sub">
+        You can continue browsing more products, view payment instructions again, or open the WhatsApp chat with us.
+      </p>
+
+      <div class="btn-row">
+        <button class="btn-main" type="button" onclick="window.location.href='index.html'">
+          🛍️ Continue Shopping
+        </button>
+
+        <button class="btn-secondary" type="button" onclick="window.location.href='payment.html'">
+          💳 View Payment Instructions
+        </button>
+
+        <!-- 📲 Track order on WhatsApp -->
+        <button class="btn-secondary" type="button"
+          onclick="window.open('https://wa.me/919441741141','_blank')">
+          📲 Track Order on WhatsApp
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // 1) Latest order info from localStorage
+    (function () {
+      const latestBox = document.getElementById("latestOrderBox");
+      const historyRaw = localStorage.getItem("mcpOrderHistory");
+
+      if (!historyRaw) {
+        latestBox.innerHTML =
+          '<div class="order-empty-text">No order history found on this device.</div>';
+        return;
+      }
+
+      let history;
+      try {
+        history = JSON.parse(historyRaw);
+      } catch (e) {
+        latestBox.innerHTML =
+          '<div class="order-empty-text">Could not read order history.</div>';
+        return;
+      }
+
+      if (!Array.isArray(history) || history.length === 0) {
+        latestBox.innerHTML =
+          '<div class="order-empty-text">No order history found on this device.</div>';
+        return;
+      }
+
+      const lastOrder = history[history.length - 1];
+      const when = lastOrder.date ? new Date(lastOrder.date) : null;
+      const dateStr = when ? when.toLocaleString() : "N/A";
+      const total = lastOrder.total || 0;
+      const name = lastOrder.name || "Customer";
+      const phone = lastOrder.phone || "Not provided";
+
+      latestBox.innerHTML = `
+        <div class="order-summary-box">
+          <div class="order-summary-row">
+            <span>Name</span>
+            <span>${name}</span>
+          </div>
+          <div class="order-summary-row">
+            <span>Phone</span>
+            <span>${phone}</span>
+          </div>
+          <div class="order-summary-row">
+            <span>Date &amp; Time</span>
+            <span>${dateStr}</span>
+          </div>
+          <div class="order-summary-total">
+            Total (approx): ₹ ${Number(total).toFixed(0)}
+          </div>
+        </div>
+      `;
+    })();
+
+    // 2) Change messages based on last payment method (UPI or COD)
+    (function () {
+      const method = localStorage.getItem("mcpLastPaymentMethod"); // "upi" or "cod" or null
+      const thankTextSub = document.getElementById("thankTextSub");
+      const prepMain = document.getElementById("prepMain");
+      const prepSub = document.getElementById("prepSub");
+
+      if (!method || !thankTextSub || !prepMain || !prepSub) return;
+
+      if (method === "upi") {
+        thankTextSub.textContent =
+          "You selected UPI payment. If you have already paid, keep your transaction ID ready. Our team will verify and confirm on WhatsApp.";
+        prepMain.textContent = "Verifying your UPI payment...";
+        prepSub.textContent =
+          "Once your payment is confirmed, we’ll start preparing and packing your masalas.";
+      } else if (method === "cod") {
+        thankTextSub.textContent =
+          "You selected Cash on Delivery. Please keep the cash amount ready when our delivery partner arrives.";
+        prepMain.textContent = "Scheduling your COD delivery...";
+        prepSub.textContent =
+          "Our team is planning the delivery route and will update you on WhatsApp before dispatch.";
+      }
+    })();
+
+    // 3) After a few seconds, stop the spinner and mark Step 3 as done
+    setTimeout(() => {
+      const spinner = document.querySelector(".prep-spinner");
+      const prepWrap = document.querySelector(".prep-wrap");
+      const prepMain = document.getElementById("prepMain");
+      const prepSub = document.getElementById("prepSub");
+      const step3 = document.getElementById("step3");
+
+      // Remove spinner
+      if (spinner) spinner.remove();
+
+      // Change background to "success" feel
+      if (prepWrap) prepWrap.style.background = "#e9f9ef";
+
+      // Update texts
+      if (prepMain)
+        prepMain.textContent = "Order status: Waiting for WhatsApp confirmation";
+      if (prepSub)
+        prepSub.textContent =
+          "Our team has your order details. You will receive a confirmation message soon.";
+
+      // Make Step 3 look completed instead of 'current'
+      if (step3) {
+        step3.classList.remove("current");
+        step3.classList.add("done");
+        step3.innerHTML = "📦 <span>Step 3</span> Confirmation";
+      }
+    }, 6000); // 6 seconds
+  </script>
+</body>
+</html>

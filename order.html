@@ -1,0 +1,590 @@
+ <!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Order Details | MCP Masalas</title>
+
+  <style>
+    :root {
+      --accent: #c0392b;
+      --accent-soft: #ffe8e4;
+      --bg: #fffaf5;
+      --card: #ffffff;
+      --text-dark: #2c3e50;
+      --text-soft: #7f8c8d;
+      --radius-lg: 18px;
+      --shadow-soft: 0 10px 30px rgba(0,0,0,0.08);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text-dark);
+      padding: 1.2rem 1rem 2rem;
+      display: flex;
+      justify-content: center;
+    }
+
+    .page {
+      width: 100%;
+      max-width: 900px;
+      display: grid;
+      grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
+      gap: 1rem;
+    }
+
+    @media (max-width: 800px) {
+      .page {
+        grid-template-columns: minmax(0,1fr);
+      }
+    }
+
+    h1 {
+      font-size: 1.4rem;
+      margin-bottom: 0.6rem;
+    }
+
+    .card {
+      background: var(--card);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-soft);
+      padding: 0.9rem 1rem;
+      margin-bottom: 0.7rem;
+    }
+
+    .card h2 {
+      font-size: 1rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .card-sub {
+      font-size: 0.8rem;
+      color: var(--text-soft);
+      margin-bottom: 0.5rem;
+    }
+
+    /* ORDER SUMMARY */
+    .summary-items {
+      max-height: 220px;
+      overflow: auto;
+      border-top: 1px dashed rgba(0,0,0,0.07);
+      padding-top: 0.4rem;
+      margin-top: 0.3rem;
+      font-size: 0.84rem;
+    }
+
+    .summary-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 0.3rem;
+    }
+
+    .summary-row-main {
+      font-weight: 500;
+    }
+
+    .summary-row-sub {
+      font-size: 0.78rem;
+      color: var(--text-soft);
+    }
+
+    .summary-totals {
+      margin-top: 0.5rem;
+      font-size: 0.86rem;
+    }
+
+    .summary-totals .row {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 0.2rem;
+    }
+
+    .summary-totals .row.total {
+      font-weight: 700;
+      font-size: 0.95rem;
+    }
+
+    /* FORM */
+    label {
+      display: block;
+      font-size: 0.84rem;
+      margin-top: 0.5rem;
+    }
+
+    input, textarea, select {
+      width: 100%;
+      padding: 0.45rem 0.6rem;
+      margin-top: 0.2rem;
+      border-radius: 10px;
+      border: 1px solid rgba(0,0,0,0.12);
+      font-size: 0.86rem;
+      outline: none;
+    }
+
+    input:focus, textarea:focus, select:focus {
+      border-color: var(--accent);
+    }
+
+    textarea {
+      resize: vertical;
+      min-height: 70px;
+    }
+
+    .btn-main {
+      margin-top: 0.8rem;
+      width: 100%;
+      border-radius: 999px;
+      border: none;
+      padding: 0.7rem 1rem;
+      font-size: 0.95rem;
+      cursor: pointer;
+      background: #25d366;
+      color: #fff;
+      box-shadow: 0 8px 20px rgba(37,211,102,0.4);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.4rem;
+    }
+
+    .btn-secondary {
+      margin-top: 0.4rem;
+      width: 100%;
+      border-radius: 999px;
+      border: 1px solid rgba(0,0,0,0.15);
+      padding: 0.6rem 1rem;
+      font-size: 0.85rem;
+      cursor: pointer;
+      background: #ffffff;
+      color: var(--text-dark);
+    }
+
+    .small-note {
+      font-size: 0.75rem;
+      color: var(--text-soft);
+      margin-top: 0.3rem;
+    }
+
+    /* MAP */
+    #mapSection {
+      margin-top: 0.5rem;
+      display: none;
+    }
+
+    #mapFrame {
+      width: 100%;
+      height: 220px;
+      border: none;
+      border-radius: 12px;
+      margin-top: 0.4rem;
+    }
+
+    /* ORDER HISTORY */
+    .history-list {
+      margin-top: 0.4rem;
+      border-top: 1px dashed rgba(0,0,0,0.08);
+      padding-top: 0.4rem;
+      max-height: 200px;
+      overflow: auto;
+      font-size: 0.8rem;
+    }
+
+    .history-item {
+      padding: 0.3rem 0;
+      border-bottom: 1px dashed rgba(0,0,0,0.06);
+    }
+
+    .history-item strong {
+      display: block;
+    }
+
+    .back-link {
+      display: inline-block;
+      margin-bottom: 0.4rem;
+      font-size: 0.8rem;
+      color: var(--accent);
+      text-decoration: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <!-- LEFT: CUSTOMER DETAILS + MAP + HISTORY -->
+    <div>
+      <a href="index.html" class="back-link">← Back to products</a>
+      <h1>Order Details</h1>
+
+      <section class="card">
+        <h2>Customer Information</h2>
+        <p class="card-sub">Please fill your delivery details. We will send this along with your cart items on WhatsApp.</p>
+
+        <label>
+          Full Name
+          <input id="custName" placeholder="Your name" />
+        </label>
+
+        <label>
+          Phone Number
+          <input id="custPhone" type="tel" placeholder="10-digit mobile number" />
+        </label>
+
+        <label>
+          Delivery Address
+          <textarea id="custAddress" placeholder="House / Flat, Street, Area, City, Pincode"></textarea>
+        </label>
+
+        <label>
+          Delivery Area
+          <select id="deliveryArea">
+            <option value="">Select area</option>
+            <option value="nearby">Nearby (within 3 km)</option>
+            <option value="city">Within city limits</option>
+            <option value="outside">Outside city / Nearby towns</option>
+            <option value="pickup">Self pickup from shop</option>
+          </select>
+        </label>
+
+        <button class="btn-secondary" id="showOnMapBtn">
+          📍 Show on Google Maps
+        </button>
+
+        <div id="mapSection">
+          <div class="small-note">
+            This is a rough map location based on your address. Please verify before confirming.
+          </div>
+          <iframe id="mapFrame" loading="lazy"></iframe>
+        </div>
+
+        <button class="btn-main" id="sendOrderBtn">
+          🛒 Confirm & Send on WhatsApp
+        </button>
+
+        <div class="small-note">
+          By tapping confirm, your cart and address will be sent to our WhatsApp number. Our team will reply with final confirmation.
+        </div>
+      </section>
+
+      <section class="card">
+        <h2>Your Past Orders (This Device)</h2>
+        <p class="card-sub">Quick history stored only in this browser. Clearing browser data will remove it.</p>
+        <div id="historyList" class="history-list">
+          <!-- JS will render history here -->
+        </div>
+      </section>
+    </div>
+
+    <!-- RIGHT: ORDER SUMMARY -->
+    <div>
+      <section class="card">
+        <h2>Order Summary</h2>
+        <p class="card-sub">Review items before confirming. Totals update based on your delivery area.</p>
+
+        <div id="summaryItems" class="summary-items">
+          <!-- JS items -->
+        </div>
+
+        <div class="summary-totals">
+          <div class="row">
+            <span>Subtotal</span>
+            <span>₹ <span id="summarySubtotal">0</span></span>
+          </div>
+          <div class="row">
+            <span>Delivery charge</span>
+            <span>₹ <span id="summaryDelivery">0</span></span>
+          </div>
+          <div class="row total">
+            <span>Total</span>
+            <span>₹ <span id="summaryTotal">0</span></span>
+          </div>
+        </div>
+
+        <div class="small-note">
+          Final delivery charge may vary slightly based on exact location and order size. We will confirm the final total on WhatsApp.
+        </div>
+      </section>
+    </div>
+  </div>
+
+  <script type="module">
+    import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm";
+
+    const SUPABASE_URL = "https://kkrqcprhnafrhgjqhwrg.supabase.co";
+    const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtrcnFjcHJobmFmcmhnanFod3JnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjQxOTYzNjEsImV4cCI6MjA3OTc3MjM2MX0.-udhnc4gYVwkPX8aeD8oaWCnt6VcPWIqmG6FF4rYUFk";
+    const MCP_WHATSAPP_NUMBER = "919441741141";
+
+    const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+    // Get cart data from localStorage (set on main page)
+    const cartData = JSON.parse(localStorage.getItem("mcpCartData") || "{}");
+
+    const summaryItemsEl = document.getElementById("summaryItems");
+    const subtotalEl = document.getElementById("summarySubtotal");
+    const deliveryEl = document.getElementById("summaryDelivery");
+    const totalEl = document.getElementById("summaryTotal");
+
+    const custNameEl = document.getElementById("custName");
+    const custPhoneEl = document.getElementById("custPhone");
+    const custAddressEl = document.getElementById("custAddress");
+    const deliveryAreaEl = document.getElementById("deliveryArea");
+
+    const mapSectionEl = document.getElementById("mapSection");
+    const mapFrameEl = document.getElementById("mapFrame");
+
+    const historyListEl = document.getElementById("historyList");
+
+    function calculateSubtotal() {
+      return Object.values(cartData).reduce((sum, item) => {
+        const price = Number(item.product?.price || 0);
+        return sum + price * (item.qty || 0);
+      }, 0);
+    }
+
+    function renderSummary() {
+      summaryItemsEl.innerHTML = "";
+
+      const items = Object.values(cartData);
+      if (!items.length) {
+        summaryItemsEl.innerHTML =
+          "<div class='summary-row-sub'>No items in cart. Go back and add some masalas.</div>";
+        updateTotals();
+        return;
+      }
+
+      items.forEach(({ product, qty }) => {
+        const row = document.createElement("div");
+        row.className = "summary-row";
+
+        const left = document.createElement("div");
+        const main = document.createElement("div");
+        main.className = "summary-row-main";
+        main.textContent = `${product.name} x ${qty}`;
+        const sub = document.createElement("div");
+        sub.className = "summary-row-sub";
+        sub.textContent = product.unit || "";
+
+        left.appendChild(main);
+        left.appendChild(sub);
+
+        const right = document.createElement("div");
+        right.textContent = "₹ " + (Number(product.price || 0) * qty);
+
+        row.appendChild(left);
+        row.appendChild(right);
+        summaryItemsEl.appendChild(row);
+      });
+
+      updateTotals();
+    }
+
+    function getDeliveryCharge(area, subtotal) {
+      if (!subtotal) return 0;
+      if (subtotal >= 500) return 0;
+
+      switch (area) {
+        case "nearby":
+          return 20;
+        case "city":
+          return 40;
+        case "outside":
+          return 60;
+        case "pickup":
+          return 0;
+        default:
+          return 40;
+      }
+    }
+
+    function updateTotals() {
+      const subtotal = calculateSubtotal();
+      const area = deliveryAreaEl.value;
+      const delivery = getDeliveryCharge(area, subtotal);
+      const total = subtotal + delivery;
+
+      subtotalEl.textContent = subtotal.toFixed(0);
+      deliveryEl.textContent = delivery.toFixed(0);
+      totalEl.textContent = total.toFixed(0);
+    }
+
+    deliveryAreaEl.addEventListener("change", updateTotals);
+
+    // Google Maps preview
+    document.getElementById("showOnMapBtn").addEventListener("click", () => {
+      const addr = custAddressEl.value.trim();
+      if (!addr) {
+        alert("Please enter your address first.");
+        return;
+      }
+      const url =
+        "https://www.google.com/maps?q=" +
+        encodeURIComponent(addr) +
+        "&output=embed";
+      mapFrameEl.src = url;
+      mapSectionEl.style.display = "block";
+    });
+
+    function loadOrderHistory() {
+      const history = JSON.parse(localStorage.getItem("mcpOrderHistory") || "[]");
+      if (!history.length) {
+        historyListEl.innerHTML =
+          "<div class='summary-row-sub'>No orders yet from this browser.</div>";
+        return;
+      }
+
+      historyListEl.innerHTML = "";
+      history
+        .slice()
+        .reverse()
+        .forEach((order) => {
+          const div = document.createElement("div");
+          div.className = "history-item";
+
+          const when = new Date(order.date);
+          const dateStr = when.toLocaleString();
+
+          div.innerHTML = `
+            <strong>₹ ${order.total.toFixed(0)}</strong>
+            <div>${order.name} (${order.phone})</div>
+            <div class="summary-row-sub">${dateStr}</div>
+          `;
+          historyListEl.appendChild(div);
+        });
+    }
+
+    function saveOrderHistory(order) {
+      const history = JSON.parse(localStorage.getItem("mcpOrderHistory") || "[]");
+      history.push(order);
+      localStorage.setItem("mcpOrderHistory", JSON.stringify(history));
+      loadOrderHistory();
+    }
+
+    async function saveOrderToSupabase(orderRecord) {
+      const { data, error } = await supabase
+        .from("orders")
+        .insert([orderRecord])
+        .select()
+        .single();
+
+      if (error) {
+        console.error("Error saving order to Supabase:", error);
+        alert("Could not save order to server: " + (error.message || ""));
+        throw error;
+      }
+
+      return data;
+    }
+
+    function escapeForWhatsApp(text) {
+      return encodeURIComponent(text);
+    }
+
+    async function sendOrderToWhatsApp() {
+      const name = custNameEl.value.trim();
+      const phone = custPhoneEl.value.trim();
+      const address = custAddressEl.value.trim();
+      const area = deliveryAreaEl.value;
+
+      if (!name || !phone || !address) {
+        alert("Please fill name, phone and address.");
+        return;
+      }
+
+      const items = Object.values(cartData);
+      if (!items.length) {
+        alert("Your cart is empty. Go back and add items.");
+        return;
+      }
+
+      const subtotal = calculateSubtotal();
+      const delivery = getDeliveryCharge(area, subtotal);
+      const total = subtotal + delivery;
+
+      const mapsUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
+        address
+      )}`;
+
+      let message =
+        "Hi MCP Masalas,%0A%0AI want to place the following order:%0A";
+
+      items.forEach(({ product, qty }) => {
+        message += `%0A• ${product.name} (${product.unit || ""}) x ${qty} = ₹${
+          Number(product.price || 0) * qty
+        }`;
+      });
+
+      message += `%0A%0ASubtotal: ₹${subtotal.toFixed(0)}`;
+      message += `%0ADelivery: ₹${delivery.toFixed(0)}`;
+      message += `%0ATotal: ₹${total.toFixed(0)}`;
+
+      message += `%0A%0A--- Customer Details ---`;
+      message += `%0AName: ${escapeForWhatsApp(name)}`;
+      message += `%0APhone: ${escapeForWhatsApp(phone)}`;
+      message += `%0AAddress: ${escapeForWhatsApp(address)}`;
+      if (area) {
+        message += `%0AArea: ${escapeForWhatsApp(area)}`;
+      }
+
+      message += `%0A%0A📍 Location (Google Maps): ${escapeForWhatsApp(mapsUrl)}`;
+
+      const waUrl = `https://wa.me/${MCP_WHATSAPP_NUMBER}?text=${message}`;
+
+      const orderRecord = {
+        customer_name: name,
+        phone,
+        delivery_area: area || null,
+        total,
+        // address: address,  // uncomment if you add an address column
+      };
+
+      let savedRow;
+      try {
+        savedRow = await saveOrderToSupabase(orderRecord);
+      } catch (e) {
+        return;
+      }
+       // ✅ Save this order's ID so payment.html can update the same row
+if (savedRow && savedRow.id) {
+  localStorage.setItem("mcpLastOrderId", String(savedRow.id));
+  console.log("Saved mcpLastOrderId =", savedRow.id);
+}
+
+
+
+      // ✅ Save for next steps (payment + thankyou + admin proof)
+      localStorage.setItem("mcpLastOrderId", savedRow.id);
+      localStorage.setItem("mcpLastCustomerName", name);
+
+      saveOrderHistory({
+        name,
+        phone,
+        total,
+        date: new Date().toISOString()
+      });
+
+      localStorage.removeItem("mcpCartData");
+      localStorage.removeItem("mcpCartTotals");
+
+      // Open WhatsApp in new tab
+      window.open(waUrl, "_blank");
+
+      // Redirect this tab to payment page with total
+      window.location.href = `payment.html?total=${total.toFixed(0)}`;
+    }
+
+    document
+      .getElementById("sendOrderBtn")
+      .addEventListener("click", sendOrderToWhatsApp);
+
+    renderSummary();
+    loadOrderHistory();
+  </script>
+</body>
+</html>
+
